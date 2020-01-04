@@ -22,5 +22,6 @@ resource "azurerm_sql_database" "sqlserverdb" {
   server_name                      = "${azurerm_sql_server.sqlserver.name}"
   max_size_bytes                   = 268435456000
   collation                        = "SQL_Latin1_General_CP1_CS_AS"
-  requested_service_objective_name = "S0"
+  edition                          = "Basic"
+  requested_service_objective_name = "B"
 }
