@@ -25,6 +25,8 @@ stages:
   - stage: Deploy
     dependsOn: Build
     condition: succeeded()
+    variables:
+      AdminUserName: 'chadministrator'
 
     jobs:
       - job: 'DeployToAzure'
@@ -57,14 +59,16 @@ stages:
               backendAzureRmContainerName: 'terraform-state'
               backendAzureRmKey: 'terraform.tfstate'
             displayName: 'Terrafom Init'
+
           - task: TerraformTaskV1@0
             inputs:
               provider: 'azurerm'
               command: 'plan'
               workingDirectory: '$(System.DefaultWorkingDirectory)/SonarQube'
-              commandOptions: '-out main.tfplan'
+              commandOptions: '-out main.tfplan -var=AdminUserName=$(AdminUserName) -var=AdminPassword=$(AdminPassword)'
               environmentServiceNameAzureRM: 'MSDN'
             displayName: 'Terraform Plan'
+
 
           - task: TerraformTaskV1@0
             inputs:
