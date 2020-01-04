@@ -6,12 +6,36 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'ubuntu-latest'
+stages:
+  - stage: Build
+    jobs:
+    - job: 'BuildSonarQubeTerraformFiles'
 
-steps:
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.SourcesDirectory)/Terraform/SonarQube'
-    ArtifactName: 'SonarQube'
-    publishLocation: 'Container'
+      pool:
+        vmImage: 'ubuntu-latest'
+
+      steps:
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.SourcesDirectory)/Terraform/SonarQube'
+          ArtifactName: 'SonarQube'
+          publishLocation: 'Container'
+
+  - stage: Deploy
+    dependsOn: Build
+    condition: succeeded()
+
+    jobs:
+      - job: 'DeployToAzure'
+
+        pool:
+          vmImage: 'ubuntu-latest'
+        
+        steps:
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'SonarQube'
+              downloadPath: '$(System.ArtifactsDirectory)'
+            displayName: 'Download Artifact'
