@@ -44,4 +44,7 @@ module "AzureAppService" {
   DBName            = "${var.DBName}"
   AdminUserName     = "${var.AdminUserName}"
   AdminPassword     = "${var.AdminPassword}"
+  ACRLoginServer    = "${module.AzureContainerRegistry.login_server}"
+  ACRUserName       = "${module.AzureContainerRegistry.admin_username}"
+  ACRPassword       = "${module.AzureContainerRegistry.admin_password}"
 }
