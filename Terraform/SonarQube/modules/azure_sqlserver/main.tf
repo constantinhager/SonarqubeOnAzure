@@ -20,7 +20,6 @@ resource "azurerm_sql_database" "sqlserverdb" {
   resource_group_name = "${var.resourcegroupName}"
   location            = "${var.location}"
   server_name         = "${azurerm_sql_server.sqlserver.name}"
-  max_size_bytes      = 268435456000
   collation           = "SQL_Latin1_General_CP1_CS_AS"
   edition             = "Basic"
 }
