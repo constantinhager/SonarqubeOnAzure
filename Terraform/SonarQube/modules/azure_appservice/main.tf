@@ -14,7 +14,7 @@ resource "azurerm_app_service" "appservice" {
     "DOCKER_REGISTRY_SERVER_USERNAME"     = "${var.ACRUserName}"
     "DOCKER_REGISTRY_SERVER_PASSWORD"     = "${var.ACRPassword}"
     "sonar.jdbc.username"                 = "jdbc:sqlserver://${var.SQLServerFQDN};databaseName=${var.DBName}"
-    "sonar.jdbc.password"                 = "${var.AdminUserName}",
+    "sonar.jdbc.password"                 = "${var.AdminUserName}"
     "sonar.jdbc.url"                      = "${var.AdminPassword}"
   }
 }
