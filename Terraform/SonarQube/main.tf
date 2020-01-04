@@ -30,5 +30,6 @@ module "AzureSQLServer" {
   SQLServerName     = "${var.SQLServerName}"
   AdminUserName     = "${var.AdminUserName}"
   AdminPassword     = "${var.AdminPassword}"
+  DBName            = "${var.DBName}"
 }
 
