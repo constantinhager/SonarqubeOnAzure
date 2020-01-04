@@ -17,3 +17,7 @@ variable "AdminUserName" {
 variable "AdminPassword" {
   description = "The password of the Azure SQL Server Administrator"
 }
+
+variable "DBName" {
+  description = "The name of the sonarqube SQL Database"
+}
