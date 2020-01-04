@@ -22,3 +22,13 @@ module "AzureAppServicePlan" {
   AppServicePlanName = "${var.AppServicePlanName}"
 }
 
+module "AzureSQLServer" {
+  source = "./modules/azure_sqlserver"
+
+  location          = "${var.location}"
+  resourcegroupName = "${var.resourcegroupName}"
+  SQLServerName     = "${var.SQLServerName}"
+  AdminUserName     = "${var.AdminUserName}"
+  AdminPassword     = "${var.AdminPassword}"
+}
+

@@ -22,3 +22,16 @@ variable "AppServicePlanName" {
   description = "The name of the Azure App Service Plan"
   default     = "chappserviceplan"
 }
+
+variable "SQLServerName" {
+  description = "The name of the Azure SQL Server"
+  default = "chsqlserver"
+}
+
+variable "AdminUserName" {
+  description = "The name of the Azure SQL Server Administrator"
+}
+
+variable "AdminPassword" {
+  description = "The password of the Azure SQL Server Administrator"
+}
