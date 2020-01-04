@@ -56,4 +56,21 @@ stages:
               backendAzureRmStorageAccountName: 'ch45947'
               backendAzureRmContainerName: 'terraform-state'
               backendAzureRmKey: 'terraform.tfstate'
-          
+            displayName: 'Terrafom Init'
+          - task: TerraformTaskV1@0
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/SonarQube'
+              commandOptions: '-out main.tfplan'
+              environmentServiceNameAzureRM: 'MSDN'
+            displayName: 'Terraform Plan'
+
+          - task: TerraformTaskV1@0
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/SonarQube'
+              commandOptions: 'main.tfplan'
+              environmentServiceNameAzureRM: 'MSDN'
+            displayName: 'Terraform Apply'
