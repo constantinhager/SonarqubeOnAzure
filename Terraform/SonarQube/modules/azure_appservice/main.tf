@@ -7,8 +7,4 @@ resource "azurerm_app_service" "appservice" {
   site_config {
     linux_fx_version = "DOCKER|${var.ACRLoginServer}/sonarqube:v1"
   }
-
-  app_settings = {
-    "WEBSITES_ENABLE_APP_SERVICE_STORAGE" = false
-  }
 }
