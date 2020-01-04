@@ -5,7 +5,7 @@ resource "azurerm_app_service" "appservice" {
   app_service_plan_id = "${var.AppServicePlanId}"
 
   site_config {
-      linux_fx_version = "DOCKER|${data.azurerm_container_registry.containertest.login_server}/sonarqube:v1"
+      linux_fx_version = "DOCKER|${var.ACRLoginServer}/sonarqube:v1"
   }
 
   app_settings {
