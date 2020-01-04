@@ -25,7 +25,7 @@ variable "AppServicePlanName" {
 
 variable "SQLServerName" {
   description = "The name of the Azure SQL Server"
-  default = "chsqlserver"
+  default     = "chsqlserver"
 }
 
 variable "AdminUserName" {
@@ -34,4 +34,9 @@ variable "AdminUserName" {
 
 variable "AdminPassword" {
   description = "The password of the Azure SQL Server Administrator"
+}
+
+variable "DBName" {
+  description = "The name of the sonarqube SQL Database"
+  default     = "SonarQube"
 }
