@@ -3,6 +3,12 @@ resource "random_integer" "sa_num" {
   max = 99999
 }
 
+data "azurerm_container_registry" "acr_data" {
+  name = "${var.containerRegistryName}"
+  resource_group_name = "${var.resourcegroupName}"
+}
+
+
 resource "azurerm_container_registry" "acr" {
   name                = "${var.containerRegistryName}${random_integer.sa_num.result}"
   resource_group_name = "${var.resourcegroupName}"

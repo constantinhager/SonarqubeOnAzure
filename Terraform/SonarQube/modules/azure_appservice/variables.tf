@@ -29,3 +29,15 @@ variable "AdminUserName" {
 variable "AdminPassword" {
   description = "The password of the Azure SQL Server Administrator"
 }
+
+variable "ACRLoginServer" {
+  description = "The fqdn of the ACR"
+}
+
+variable "ACRUserName" {
+  description = "The username"
+}
+
+variable "ACRPassword" {
+  description = "The password"
+}

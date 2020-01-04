@@ -9,9 +9,9 @@ resource "azurerm_app_service" "appservice" {
   }
 
   app_settings {
-      "DOCKER_REGISTRY_SERVER_URL"          = "https://${data.azurerm_container_registry.acr.login_server}"
-      "DOCKER_REGISTRY_SERVER_USERNAME"     = "${data.azurerm_container_registry.acr.admin_username}"
-      "DOCKER_REGISTRY_SERVER_PASSWORD"     = "${data.azurerm_container_registry.acr.admin_password}"
+      "DOCKER_REGISTRY_SERVER_URL"          = "https://${var.ACRLoginServer}"
+      "DOCKER_REGISTRY_SERVER_USERNAME"     = "${var.ACRUserName}"
+      "DOCKER_REGISTRY_SERVER_PASSWORD"     = "${var.ACRPassword}"
       "sonar.jdbc.username" = "jdbc:sqlserver://${var.SQLServerFQDN};databaseName=${var.DBName}"
       "sonar.jdbc.password" = "${var.AdminUserName}",
       "sonar.jdbc.url" = "${var.AdminPassword}"
