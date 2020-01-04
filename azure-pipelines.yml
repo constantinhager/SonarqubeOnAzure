@@ -1,4 +1,5 @@
 # Starter pipeline
+
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
@@ -6,12 +7,70 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'ubuntu-latest'
+stages:
+  - stage: Build
+    jobs:
+    - job: 'BuildSonarQubeTerraformFiles'
 
-steps:
-- task: PublishBuildArtifacts@1
-  inputs:
-    PathtoPublish: '$(Build.SourcesDirectory)'
-    ArtifactName: 'drop'
-    publishLocation: 'Container'
+      pool:
+        vmImage: 'ubuntu-latest'
+
+      steps:
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.SourcesDirectory)/Terraform/SonarQube'
+          ArtifactName: 'SonarQube'
+          publishLocation: 'Container'
+
+  - stage: Deploy
+    dependsOn: Build
+    condition: succeeded()
+
+    jobs:
+      - job: 'DeployToAzure'
+
+        pool:
+          vmImage: 'ubuntu-latest'
+        
+        steps:
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'SonarQube'
+              downloadPath: '$(System.DefaultWorkingDirectory)'
+            displayName: 'Download Artifact'
+
+          - task: TerraformInstaller@0
+            inputs:
+              terraformVersion: '0.12.3'
+            displayName: 'Install Terraform'
+
+          - task: TerraformTaskV1@0
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/SonarQube'
+              backendServiceArm: 'MSDN'
+              backendAzureRmResourceGroupName: 'tfstate'
+              backendAzureRmStorageAccountName: 'ch45947'
+              backendAzureRmContainerName: 'terraform-state'
+              backendAzureRmKey: 'terraform.tfstate'
+            displayName: 'Terrafom Init'
+          - task: TerraformTaskV1@0
+            inputs:
+              provider: 'azurerm'
+              command: 'plan'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/SonarQube'
+              commandOptions: '-out main.tfplan'
+              environmentServiceNameAzureRM: 'MSDN'
+            displayName: 'Terraform Plan'
+
+          - task: TerraformTaskV1@0
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/SonarQube'
+              commandOptions: 'main.tfplan'
+              environmentServiceNameAzureRM: 'MSDN'
+            displayName: 'Terraform Apply'
