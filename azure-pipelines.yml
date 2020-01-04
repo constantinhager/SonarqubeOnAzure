@@ -12,6 +12,6 @@ pool:
 steps:
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.SourcesDirectory)'
+    PathtoPublish: '$(Build.SourcesDirectory)/Terraform'
     ArtifactName: 'drop'
     publishLocation: 'Container'
