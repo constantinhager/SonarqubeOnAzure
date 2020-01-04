@@ -4,7 +4,7 @@ resource "random_integer" "sa_num" {
 }
 
 data "azurerm_container_registry" "acr_data" {
-  name = "${var.containerRegistryName}"
+  name                = "${var.containerRegistryName}${random_integer.sa_num.result}"
   resource_group_name = "${var.resourcegroupName}"
 }
 
