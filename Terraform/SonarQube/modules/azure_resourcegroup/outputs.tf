@@ -1,3 +1,3 @@
 output "resourcegroupname" {
-  value = "${azurerm_resource_group.LearningDevOpsrg.name}"
+  value = "${azurerm_resource_group.SonarQuberg.name}"
 }
