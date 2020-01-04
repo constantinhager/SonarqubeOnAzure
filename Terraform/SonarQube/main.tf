@@ -33,3 +33,15 @@ module "AzureSQLServer" {
   DBName            = "${var.DBName}"
 }
 
+module "AzureAppService" {
+  source = "./modules/azure_appservice"
+
+  location          = "${var.location}"
+  resourcegroupName = "${var.resourcegroupName}"
+  AppServiceName    = "${var.AppServiceName}"
+  AppServicePlanId  = "${module.AzureAppServicePlan.serviceplanid}"
+  SQLServerFQDN     = "${module.AzureSQLServer.sqlserverfqdn}"
+  DBName            = "${var.DBName}"
+  AdminUserName     = "${var.AdminUserName}"
+  AdminPassword     = "${var.AdminPassword}"
+}

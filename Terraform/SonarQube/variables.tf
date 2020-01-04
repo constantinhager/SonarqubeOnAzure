@@ -40,3 +40,8 @@ variable "DBName" {
   description = "The name of the sonarqube SQL Database"
   default     = "SonarQube"
 }
+
+variable "AppServiceName" {
+  description = "The name of the Azure App Service"
+  default     = "chSonarQubeAppService"
+}
