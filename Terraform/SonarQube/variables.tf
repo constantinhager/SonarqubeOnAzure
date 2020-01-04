@@ -10,10 +10,15 @@ variable "resourcegroupName" {
 
 variable "containerRegistryName" {
   description = "The name of the container registry"
-  default = "chcontainerregistry"
+  default     = "chcontainerregistry"
 }
 
 variable "containerRegistrySku" {
   description = "The name of the container registry"
-  default = "Basic"
+  default     = "Basic"
+}
+
+variable "AppServicePlanName" {
+  description = "The name of the Azure App Service Plan"
+  default     = "chappserviceplan"
 }

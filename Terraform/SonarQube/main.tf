@@ -14,3 +14,11 @@ module "AzureContainerRegistry" {
   containerRegistrySku  = "${var.containerRegistrySku}"
 }
 
+module "AzureAppServicePlan" {
+  source = "./modules/azure_appserviceplan"
+
+  location           = "${var.location}"
+  resourcegroupName  = "${var.resourcegroupName}"
+  AppServicePlanName = "${var.AppServicePlanName}"
+}
+
