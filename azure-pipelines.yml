@@ -10,10 +10,8 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- checkout: self
-  path: '$(Build.ArtifactStagingDirectory)'
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    PathtoPublish: '$(Build.SourcesDirectory)'
     ArtifactName: 'drop'
     publishLocation: 'Container'
