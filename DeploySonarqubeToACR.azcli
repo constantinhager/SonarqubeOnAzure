@@ -1,7 +1,0 @@
-docker pull sonarqube
-
-docker tag sonarqube chcontainerregistry36232.azurecr.io/sonarqube:v1
-
-az acr login --name chcontainerregistry36232
-
-docker push chcontainerregistry36232.azurecr.io/sonarqube:v1

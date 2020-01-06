@@ -4,25 +4,25 @@ resource "random_integer" "sa_num" {
 }
 
 resource "azurerm_resource_group" "setup" {
-  name     = var.resource_group_name
-  location = var.location
+  name     = "${var.resource_group_name}"
+  location = "${var.location}"
 }
 
 resource "azurerm_storage_account" "sa" {
   name                     = "${lower(var.naming_prefix)}${random_integer.sa_num.result}"
-  resource_group_name      = azurerm_resource_group.setup.name
-  location                 = var.location
+  resource_group_name      = "${azurerm_resource_group.setup.name}"
+  location                 = "${var.location}"
   account_tier             = "Standard"
   account_replication_type = "LRS"
 }
 
 resource "azurerm_storage_container" "ct" {
   name                 = "terraform-state"
-  storage_account_name = azurerm_storage_account.sa.name
+  storage_account_name = "${azurerm_storage_account.sa.name}"
 }
 
 data "azurerm_storage_account_sas" "state" {
-  connection_string = azurerm_storage_account.sa.primary_connection_string
+  connection_string = "${azurerm_storage_account.sa.primary_connection_string}"
   https_only        = true
 
   resource_types {
@@ -38,8 +38,8 @@ data "azurerm_storage_account_sas" "state" {
     file  = false
   }
 
-  start  = timestamp()
-  expiry = timeadd(timestamp(), "17520h")
+  start  = "${timestamp()}"
+  expiry = "${timeadd(timestamp(), "17520h")}"
 
   permissions {
     read    = true
