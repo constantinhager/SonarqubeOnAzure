@@ -112,8 +112,7 @@
                             "value": "[parameters('ACRPassword')]"
                         }
                     ],
-                    "linuxFxVersion": "[concat('DOCKER|', parameters('dockerServerURL'), '/sonarqube:v1')]",
-                    "alwaysOn": true
+                    "linuxFxVersion": "[concat('DOCKER|', parameters('dockerServerURL'), '/sonarqube:v1')]"
                 },
                 "serverFarmId": "[parameters('servicePlanName')]"
             }
