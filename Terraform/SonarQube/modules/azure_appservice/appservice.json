@@ -80,7 +80,7 @@
             "type": "Microsoft.Web/sites",
             "location": "[parameters('location')]",
             "properties": {
-                "name": "appsettings",
+                "name": "[parameters('siteName')]",
                 "siteConfig": {
                     "appSettings": [
                         {
