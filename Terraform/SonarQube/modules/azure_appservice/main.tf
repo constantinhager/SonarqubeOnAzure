@@ -23,7 +23,7 @@ resource "azurerm_template_deployment" "appservice" {
   name                = "appservice-ARM"
   resource_group_name = "${var.resourcegroupName}"
 
-  template_body = "${file("appservice.json")}"
+  template_body = "${file("./appservice.json")}"
 
   deployment_mode = "Incremental"
 
