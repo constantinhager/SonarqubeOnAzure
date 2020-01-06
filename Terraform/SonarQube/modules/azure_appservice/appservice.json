@@ -85,7 +85,7 @@
                     "appSettings": [
                         {
                             "name": "sonar.jdbc.url",
-                            "value": "[concat('jdbc:sqlserver://', reference(resourceId('Microsoft.Sql/servers',parameters('sqlServerName'))).fullyQualifiedDomainName ,';databaseName=',parameters('databaseName'))]"
+                            "value": "[concat('jdbc:sqlserver://', parameters('sqlServerName') ,';databaseName=',parameters('databaseName'))]"
                         },
                         {
                             "name": "sonar.jdbc.username",
