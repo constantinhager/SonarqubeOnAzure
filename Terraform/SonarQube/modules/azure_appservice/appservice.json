@@ -1,0 +1,122 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "siteName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of Azure Web App"
+            }
+        },
+
+        "location": {
+            "type": "string",
+            "metadata": {
+                "description": "Location for all the resources."
+            }
+        },
+
+        "servicePlanName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Azure Web App service plan"
+            }
+        },
+
+        "sqlServerName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Azure SQL Server"
+            }
+        },
+
+        "databaseName": {
+            "type": "string",
+            "metadata": {
+                "description": "The name of the Azure SQL Database"
+            }
+        },
+
+        "sqlServerAdministratorUsername": {
+            "type": "string",
+            "metadata": {
+                "description": "The username of the Azure SQL Database Administrator"
+            }
+        },
+
+        "sqlServerAdministratorPassword": {
+            "type": "string",
+            "metadata": {
+                "description": "The password of the Azure SQL Database Administrator"
+            }
+        },
+
+        "dockerServerURL": {
+            "type": "string",
+            "metadata": {
+                "description": "The URL of the Docker Server"
+            }
+        },
+
+        "ACRUserName": {
+            "type": "string",
+            "metadata": {
+                "description": "The username of the Docker Server"
+            }
+        },
+
+        "ACRPassword": {
+            "type": "string",
+            "metadata": {
+                "description": "The password of the Docker Server"
+            }
+        }
+    },
+
+    "resources": [
+        {
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('siteName')]",
+            "type": "Microsoft.Web/sites",
+            "location": "[parameters('location')]",
+            "properties": {
+                "name": "appsettings",
+                "siteConfig": {
+                    "appSettings": [
+                        {
+                            "name": "sonar.jdbc.url",
+                            "value": "[concat('jdbc:sqlserver://', reference(resourceId('Microsoft.Sql/servers',parameters('sqlServerName'))).fullyQualifiedDomainName ,';databaseName=',parameters('databaseName'))]"
+                        },
+                        {
+                            "name": "sonar.jdbc.username",
+                            "value": "[parameters('sqlServerAdministratorUsername')]"
+                        },
+                        {
+                            "name": "sonar.jdbc.password",
+                            "value": "[parameters('sqlServerAdministratorPassword')]"
+                        },
+                        {
+                            "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                            "value": "false"
+                        },
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_URL",
+                            "value": "[concat('https://', parameters('dockerServerURL'))]"
+                        },
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                            "value": "[parameters('ACRUserName')]"
+                        },
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                            "value": "[parameters('ACRPassword')]"
+                        }
+                    ],
+                    "linuxFxVersion": "[concat('DOCKER|', parameters('dockerServerURL'), '/sonarqube:v1')]",
+                    "alwaysOn": true
+                },
+                "serverFarmId": "[parameters('servicePlanName')]"
+            }
+        }
+    ]
+}

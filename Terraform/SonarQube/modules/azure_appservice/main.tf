@@ -1,4 +1,4 @@
-resource "azurerm_app_service" "appservice" {
+/* resource "azurerm_app_service" "appservice" {
   name                = "${var.AppServiceName}"
   location            = "${var.location}"
   resource_group_name = "${var.resourcegroupName}"
@@ -17,4 +17,27 @@ resource "azurerm_app_service" "appservice" {
     "sonar.jdbc.password"                 = "${var.AdminUserName}"
     "sonar.jdbc.url"                      = "${var.AdminPassword}"
   }
+} */
+
+resource "azurerm_template_deployment" "appservice" {
+  name = "appservice-ARM"
+  resource_group_name = "${var.resourcegroupName}"
+
+  template_body = "${file(appservice.json)}"
+
+  deployment_mode = "Incremental"
+
+  parameters {
+    "sitename" = "${var.AppServiceName}"
+    "location" = "${var.location}"
+    "servicePlanName" = "${var.AppServicePlanId}"
+    "sqlServerName" = "${var.SQLServerFQDN}"
+    "databaseName" = "${var.DBName}"
+    "sqlServerAdministratorUsername" = "${var.AdminUserName}"
+    "sqlServerAdministratorPassword" = "${var.AdminPassword}"
+    "dockerServerURL" = "${var.ACRLoginServer}"
+    "ACRUserName" = "${var.ACRUserName}"
+    "ACRPassword" = "${var.ACRPassword}"
+  }
 }
+
