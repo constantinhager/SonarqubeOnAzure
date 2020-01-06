@@ -28,7 +28,7 @@ resource "azurerm_template_deployment" "appservice" {
   deployment_mode = "Incremental"
 
   parameters {
-    "sitename" = "${var.AppServiceName}"
+    "siteName" = "${var.AppServiceName}"
     "location" = "${var.location}"
     "servicePlanName" = "${var.AppServicePlanId}"
     "sqlServerName" = "${var.SQLServerFQDN}"
