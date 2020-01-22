@@ -40,7 +40,7 @@ stages:
     condition: succeeded()
     variables:
       ResourceGroupName: 'SonarQube-rg'
-      Location: 'West Europe'
+      Location: 'west europe'
 
     jobs:
     - job: 'DeployAzureResourceGroup'
