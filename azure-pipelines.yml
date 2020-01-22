@@ -79,7 +79,7 @@ stages:
             provider: 'azurerm'
             command: 'plan'
             workingDirectory: '$(System.DefaultWorkingDirectory)/AzureResourceGroup'
-            commandOptions: '-out main.tfplan -var=resourcegroupName=$(ResourceGroupName) -var=location=$(Location)'
+            commandOptions: "-out main.tfplan -var=resourcegroupName=$(ResourceGroupName) -var=location='$(Location)'"
             environmentServiceNameAzureRM: 'MSDN'
         displayName: 'Terraform Plan'
 
