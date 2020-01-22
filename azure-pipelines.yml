@@ -6,6 +6,7 @@
 
 trigger:
 - master
+- CreateContainerImage
 
 stages:
   - stage: Build
