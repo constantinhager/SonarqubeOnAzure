@@ -35,6 +35,65 @@ stages:
           ArtifactName: 'AzureContainerRegistry'
           publishLocation: 'Container'
 
+  - stage: DeployResourceGroup
+    dependsOn: Build
+    condition: succeeded()
+    variables:
+      ResourceGroupName: 'SonarQube-rg'
+
+      jobs:
+        - job: 'Deploy Azure ResourceGroup'
+
+          pool:
+            vmImage: 'ubuntu-latest'
+
+          steps:
+            - task: DownloadBuildArtifacts@0
+              inputs:
+                buildType: 'current'
+                downloadType: 'single'
+                artifactName: 'AzureResourceGroup'
+                downloadPath: '$(System.DefaultWorkingDirectory)'
+              displayName: 'Download Azure ResourceGroup Artifact'
+
+            - task: TerraformInstaller@0
+              inputs:
+              terraformVersion: '0.12.3'
+              displayName: 'Install Terraform'
+
+            - task: TerraformTaskV1@0
+              inputs:
+                provider: 'azurerm'
+                command: 'init'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/AzureResourceGroup'
+                backendServiceArm: 'MSDN'
+                backendAzureRmResourceGroupName: 'tfstate'
+                backendAzureRmStorageAccountName: 'ch45947'
+                backendAzureRmContainerName: 'terraform-state'
+                backendAzureRmKey: 'terraformResourceGroup.tfstate'
+              displayName: 'Terrafom Init'
+
+            - task: TerraformTaskV1@0
+              inputs:
+                provider: 'azurerm'
+                command: 'plan'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/AzureResourceGroup'
+                commandOptions: '-out main.tfplan -var=resourcegroupName=$(ResourceGroupName)'
+                environmentServiceNameAzureRM: 'MSDN'
+              displayName: 'Terraform Plan'
+
+
+            - task: TerraformTaskV1@0
+              inputs:
+                provider: 'azurerm'
+                command: 'apply'
+                workingDirectory: '$(System.DefaultWorkingDirectory)/AzureResourceGroup'
+                commandOptions: 'main.tfplan'
+                environmentServiceNameAzureRM: 'MSDN'
+              displayName: 'Terraform Apply'
+
+
+
   # - stage: Deploy
   #   dependsOn: Build
   #   condition: succeeded()
