@@ -10,7 +10,6 @@ variable "resourcegroupName" {
 
 variable "containerRegistryName" {
   description = "The name of the container registry"
-  default     = "chcontainerregistrymain"
 }
 
 variable "containerRegistrySku" {
