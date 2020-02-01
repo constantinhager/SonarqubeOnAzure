@@ -46,7 +46,7 @@ stages:
         inputs:
           buildType: 'current'
           downloadType: 'single'
-          artifactName: 'AzureResourceGroup'
+          artifactName: 'ContainerRegistry'
           downloadPath: '$(System.DefaultWorkingDirectory)'
         displayName: 'Download Azure ResourceGroup Artifact'
 
