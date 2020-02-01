@@ -72,7 +72,7 @@ stages:
             provider: 'azurerm'
             command: 'plan'
             workingDirectory: '$(System.DefaultWorkingDirectory)/ContainerRegistry'
-            commandOptions: "-out main.tfplan -var='containerRegistryName=chcontainerregistrymain'"
+            commandOptions: "-out main.tfplan -var=containerRegistryName=chcontainerregistrymain"
             environmentServiceNameAzureRM: 'MSDN'
         displayName: 'Terraform Plan'
 
