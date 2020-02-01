@@ -5,12 +5,15 @@ variable "location" {
 
 variable "resourcegroupName" {
   description = "the name of the resourcegroup"
+  default     = "ContainerRegistry-rg"
 }
 
 variable "containerRegistryName" {
   description = "The name of the container registry"
+  default     = "chcontainerregistrymain"
 }
 
 variable "containerRegistrySku" {
   description = "The name of the container registry"
+  default     = "Basic"
 }
