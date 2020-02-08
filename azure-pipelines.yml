@@ -163,7 +163,7 @@ stages:
             provider: 'azurerm'
             command: 'plan'
             workingDirectory: '$(System.DefaultWorkingDirectory)/SonarQubeCore'
-            commandOptions: '-out main.tfplan -var=AdminUserName=$(AdminUserName) -var=AdminPassword=$(AdminPassword) -var=resourcegroupName=$(ResourceGroupName) -var=containerRegistrySASToken=$(containerregistrySASToken)'
+            commandOptions: '-out main.tfplan -var=AdminUserName=$(AdminUserName) -var=AdminPassword=$(AdminPassword) -var=resourcegroupName=$(ResourceGroupName) -var=containerRegistrySASToken=$(containerregistrySASToken) -var=BuildId=$(Build.BuildId)'
             environmentServiceNameAzureRM: 'MSDN'
           displayName: 'Terraform Plan'
 
