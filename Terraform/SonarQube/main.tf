@@ -41,4 +41,5 @@ module "AzureAppService" {
   ACRLoginServer    = data.terraform_remote_state.containerregistry.outputs.login_server
   ACRUserName       = data.terraform_remote_state.containerregistry.outputs.admin_username
   ACRPassword       = data.terraform_remote_state.containerregistry.outputs.admin_password
+  BuildId           = var.BuildId
 }
