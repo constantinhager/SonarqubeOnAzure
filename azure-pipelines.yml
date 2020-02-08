@@ -8,6 +8,10 @@ trigger:
 #- master
 - CreateContainerImage
 
+variables:
+  ResourceGroupName: 'SonarQube-rg'
+  ContainerRegistryName: 'chcontainerregistrymain'
+
 stages:
   - stage: Build
     jobs:
@@ -32,8 +36,6 @@ stages:
   - stage: DeployResourceGroup
     dependsOn: Build
     condition: succeeded()
-    variables:
-      ResourceGroupName: 'SonarQube-rg'
 
     jobs:
     - job: 'DeployContainerRegistry'
@@ -72,7 +74,7 @@ stages:
             provider: 'azurerm'
             command: 'plan'
             workingDirectory: '$(System.DefaultWorkingDirectory)/ContainerRegistry'
-            commandOptions: "-out main.tfplan -var=containerRegistryName=chcontainerregistrymain"
+            commandOptions: "-out main.tfplan -var=containerRegistryName=$(ContainerRegistryName)"
             environmentServiceNameAzureRM: 'MSDN'
         displayName: 'Terraform Plan'
 
