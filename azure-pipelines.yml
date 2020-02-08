@@ -114,4 +114,4 @@ stages:
           Dockerfile: '$(System.DefaultWorkingDirectory)/SonarQubeCore/Dockerfile'
           repository: AzureContainerRegistry
           tags: |
-            '$(ContainerRegistryName).azurecr.io/sonarqube:$(Build.BuildId)'
+            '$(Build.BuildId)'
