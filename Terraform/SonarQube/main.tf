@@ -8,6 +8,13 @@ data "terraform_remote_state" "containerregistry" {
   }
 }
 
+module "AzureResourceGroup" {
+  source = "./modules/azure_resourcegroup"
+
+  location          = var.location
+  resourcegroupName = var.resourcegroupName
+}
+
 module "AzureAppServicePlan" {
   source = "./modules/azure_appserviceplan"
 
