@@ -13,7 +13,7 @@ variables:
   ContainerRegistryName: 'chcontainerregistrymain'
 
 stages:
-  - stage: Build
+  - stage: BuildSonarQubeTerraformFiles
     jobs:
     - job: 'BuildSonarQubeTerraformFiles'
 
@@ -33,8 +33,8 @@ stages:
           ArtifactName: 'ContainerRegistry'
           publishLocation: 'Container'
 
-  - stage: DeployResourceGroup
-    dependsOn: Build
+  - stage: 'DeployContainerRegistry'
+    dependsOn: BuildSonarQubeTerraformFiles
     condition: succeeded()
 
     jobs:
@@ -95,22 +95,41 @@ stages:
             environmentServiceNameAzureRM: 'MSDN'
         displayName: 'Terraform Apply'
 
-      - task: Docker@2
-        displayName: 'Login to Docker Hub'
-        inputs:
-          command: login
-          containerRegistry: DockerHub
+  - stage: 'BuildSonarqubeDockerImage'
+    dependsOn: DeployContainerRegistry
+    condition: succeeded()
 
-      - task: Docker@2
-        displayName: 'Login to ACR'
-        inputs:
-          command: login
-          containerRegistry: AzureContainerRegistry
+    jobs:
+    - job: 'BuildDeployDockerImage'
 
-      - task: Docker@2
-        displayName: 'Push image to azure acr'
-        inputs:
-          command: buildAndPush
-          containerRegistry: AzureContainerRegistry
-          Dockerfile: '$(System.DefaultWorkingDirectory)/SonarQubeCore/Dockerfile'
-          repository: 'sonarqube'
+      pool:
+        vmImage: 'ubuntu-latest'
+
+      steps:
+        - task: DownloadBuildArtifacts@0
+          inputs:
+            buildType: 'current'
+            downloadType: 'single'
+            artifactName: 'SonarQubeCore'
+            downloadPath: '$(System.DefaultWorkingDirectory)'
+          displayName: 'Download Sonarqube Artifact'
+
+        - task: Docker@2
+          displayName: 'Login to Docker Hub'
+          inputs:
+            command: login
+            containerRegistry: DockerHub
+
+        - task: Docker@2
+          displayName: 'Login to ACR'
+          inputs:
+            command: login
+            containerRegistry: AzureContainerRegistry
+
+        - task: Docker@2
+          displayName: 'Push image to azure acr'
+          inputs:
+            command: buildAndPush
+            containerRegistry: AzureContainerRegistry
+            Dockerfile: '$(System.DefaultWorkingDirectory)/SonarQubeCore/Dockerfile'
+            repository: 'sonarqube'
