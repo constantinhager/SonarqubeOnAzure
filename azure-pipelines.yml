@@ -5,8 +5,7 @@
 # https://aka.ms/yaml
 
 trigger:
-#- master
-- CreateContainerImage
+- master
 
 variables:
   ResourceGroupName: 'SonarQube-rg'
