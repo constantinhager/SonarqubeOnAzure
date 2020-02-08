@@ -110,8 +110,8 @@ stages:
       - task: Docker@2
         displayName: 'Push image to azure acr'
         inputs:
-          containerRegistry: AzureContainerRegistry
           command: buildAndPush
           Dockerfile: '$(System.DefaultWorkingDirectory)/SonarQubeCore/Dockerfile'
+          repository: AzureContainerRegistry
           tags: |
             '$(ContainerRegistryName).azurecr.io/sonarqube:$(Build.BuildId)'
