@@ -111,7 +111,8 @@ stages:
         displayName: 'Push image to azure acr'
         inputs:
           command: buildAndPush
+          containerRegistry: AzureContainerRegistry
           Dockerfile: '$(System.DefaultWorkingDirectory)/SonarQubeCore/Dockerfile'
-          repository: AzureContainerRegistry
+          repository: '$(ContainerRegistryName).azurecr.io'
           tags: |
             '$(Build.BuildId)'
