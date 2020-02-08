@@ -7,8 +7,13 @@
 trigger:
 - master
 
+variables:
+  ResourceGroupName: 'SonarQube-rg'
+  ContainerRegistryName: 'chcontainerregistrymain'
+  AdminUserName: 'chcontainerregistrymain'
+
 stages:
-  - stage: Build
+  - stage: BuildSonarQubeTerraformFiles
     jobs:
     - job: 'BuildSonarQubeTerraformFiles'
 
@@ -19,62 +24,153 @@ stages:
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: '$(Build.SourcesDirectory)/Terraform/SonarQube'
-          ArtifactName: 'SonarQube'
+          ArtifactName: 'SonarQubeCore'
           publishLocation: 'Container'
 
-  - stage: Deploy
-    dependsOn: Build
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.SourcesDirectory)/Terraform/ContainerRegistry'
+          ArtifactName: 'ContainerRegistry'
+          publishLocation: 'Container'
+
+  - stage: 'DeployContainerRegistry'
+    dependsOn: BuildSonarQubeTerraformFiles
     condition: succeeded()
-    variables:
-      AdminUserName: 'chadministrator'
 
     jobs:
-      - job: 'DeployToAzure'
+    - job: 'DeployContainerRegistry'
 
-        pool:
-          vmImage: 'ubuntu-latest'
-        
-        steps:
-          - task: DownloadBuildArtifacts@0
-            inputs:
-              buildType: 'current'
-              downloadType: 'single'
-              artifactName: 'SonarQube'
-              downloadPath: '$(System.DefaultWorkingDirectory)'
-            displayName: 'Download Artifact'
+      pool:
+        vmImage: 'ubuntu-latest'
 
-          - task: TerraformInstaller@0
-            inputs:
-              terraformVersion: '0.12.3'
-            displayName: 'Install Terraform'
+      steps:
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          downloadType: 'single'
+          artifactName: 'ContainerRegistry'
+          downloadPath: '$(System.DefaultWorkingDirectory)'
+        displayName: 'Download Azure ResourceGroup Artifact'
 
-          - task: TerraformTaskV1@0
-            inputs:
-              provider: 'azurerm'
-              command: 'init'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/SonarQube'
-              backendServiceArm: 'MSDN'
-              backendAzureRmResourceGroupName: 'tfstate'
-              backendAzureRmStorageAccountName: 'ch45947'
-              backendAzureRmContainerName: 'terraform-state'
-              backendAzureRmKey: 'terraform.tfstate'
-            displayName: 'Terrafom Init'
+      - task: TerraformInstaller@0
+        inputs:
+          terraformVersion: '0.12.20'
+        displayName: 'Install Terraform'
 
-          - task: TerraformTaskV1@0
-            inputs:
-              provider: 'azurerm'
-              command: 'plan'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/SonarQube'
-              commandOptions: '-out main.tfplan -var=AdminUserName=$(AdminUserName) -var=AdminPassword=$(AdminPassword)'
-              environmentServiceNameAzureRM: 'MSDN'
-            displayName: 'Terraform Plan'
+      - task: TerraformTaskV1@0
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/ContainerRegistry'
+          backendServiceArm: 'MSDN'
+          backendAzureRmResourceGroupName: 'tfstate'
+          backendAzureRmStorageAccountName: 'chsonarquberesourcegroup'
+          backendAzureRmContainerName: 'terraform-state'
+          backendAzureRmKey: 'terraform.tfstate'
+        displayName: 'Terrafom Init'
 
+      - task: TerraformTaskV1@0
+        inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/ContainerRegistry'
+            commandOptions: "-out main.tfplan -var=containerRegistryName=$(ContainerRegistryName)"
+            environmentServiceNameAzureRM: 'MSDN'
+        displayName: 'Terraform Plan'
 
-          - task: TerraformTaskV1@0
-            inputs:
-              provider: 'azurerm'
-              command: 'apply'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/SonarQube'
-              commandOptions: 'main.tfplan'
-              environmentServiceNameAzureRM: 'MSDN'
-            displayName: 'Terraform Apply'
+      - task: TerraformTaskV1@0
+        inputs:
+            provider: 'azurerm'
+            command: 'apply'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/ContainerRegistry'
+            commandOptions: 'main.tfplan'
+            environmentServiceNameAzureRM: 'MSDN'
+        displayName: 'Terraform Apply'
+
+  - stage: 'BuildSonarqubeDockerImage'
+    dependsOn: DeployContainerRegistry
+    condition: succeeded()
+
+    jobs:
+    - job: 'BuildDeployDockerImage'
+
+      pool:
+        vmImage: 'ubuntu-latest'
+
+      steps:
+        - task: DownloadBuildArtifacts@0
+          inputs:
+            buildType: 'current'
+            downloadType: 'single'
+            artifactName: 'SonarQubeCore'
+            downloadPath: '$(System.DefaultWorkingDirectory)'
+          displayName: 'Download Sonarqube Artifact'
+
+        - task: Docker@2
+          displayName: 'Login to Docker Hub'
+          inputs:
+            command: login
+            containerRegistry: DockerHub
+
+        - task: Docker@2
+          displayName: 'Login to ACR'
+          inputs:
+            command: login
+            containerRegistry: AzureContainerRegistry
+
+        - task: Docker@2
+          displayName: 'Push image to azure acr'
+          inputs:
+            command: buildAndPush
+            containerRegistry: AzureContainerRegistry
+            Dockerfile: '$(System.DefaultWorkingDirectory)/SonarQubeCore/Dockerfile'
+            repository: 'sonarqube'
+
+  - stage: 'DeployAzureWebApp'
+    dependsOn: BuildSonarqubeDockerImage
+    condition: succeeded()
+
+    jobs:
+    - job: 'DeployAzureWebApp'
+
+      pool:
+        vmImage: 'ubuntu-latest'
+
+      steps:
+        - task: DownloadBuildArtifacts@0
+          inputs:
+            buildType: 'current'
+            downloadType: 'single'
+            artifactName: 'SonarQubeCore'
+            downloadPath: '$(System.DefaultWorkingDirectory)'
+          displayName: 'Download Sonarqube Artifact'
+
+        - task: TerraformTaskV1@0
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/SonarQubeCore'
+            backendServiceArm: 'MSDN'
+            backendAzureRmResourceGroupName: 'tfstate'
+            backendAzureRmStorageAccountName: 'ch45947'
+            backendAzureRmContainerName: 'terraform-state'
+            backendAzureRmKey: 'terraform.tfstate'
+          displayName: 'Terrafom Init'
+
+        - task: TerraformTaskV1@0
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/SonarQubeCore'
+            commandOptions: '-out main.tfplan -var=AdminUserName=$(AdminUserName) -var=AdminPassword=$(AdminPassword) -var=resourcegroupName=$(ResourceGroupName) -var=containerRegistrySASToken=$(containerregistrySASToken) -var=BuildId=$(Build.BuildId)'
+            environmentServiceNameAzureRM: 'MSDN'
+          displayName: 'Terraform Plan'
+
+        - task: TerraformTaskV1@0
+          inputs:
+            provider: 'azurerm'
+            command: 'apply'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/SonarQubeCore'
+            commandOptions: 'main.tfplan'
+            environmentServiceNameAzureRM: 'MSDN'
+          displayName: 'Terraform Apply'

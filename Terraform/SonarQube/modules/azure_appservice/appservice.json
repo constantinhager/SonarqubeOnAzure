@@ -70,6 +70,13 @@
             "metadata": {
                 "description": "The password of the Docker Server"
             }
+        },
+
+        "BuildId": {
+            "type": "string",
+            "metadata": {
+                "description": "The BuildId that we get the right docker image"
+            }
         }
     },
 
@@ -112,7 +119,7 @@
                             "value": "[parameters('ACRPassword')]"
                         }
                     ],
-                    "linuxFxVersion": "[concat('DOCKER|', parameters('dockerServerURL'), '/sonarqube:v1')]"
+                    "linuxFxVersion": "[concat('DOCKER|', parameters('dockerServerURL'), '/sonarqube:', parameters('BuildId'))]"
                 },
                 "serverFarmId": "[parameters('servicePlanName')]"
             }

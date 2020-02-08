@@ -5,17 +5,6 @@ variable "location" {
 
 variable "resourcegroupName" {
   description = "the name of the resourcegroup"
-  default     = "Soarqube-rg"
-}
-
-variable "containerRegistryName" {
-  description = "The name of the container registry"
-  default     = "chcontainerregistry"
-}
-
-variable "containerRegistrySku" {
-  description = "The name of the container registry"
-  default     = "Basic"
 }
 
 variable "AppServicePlanName" {
@@ -25,7 +14,7 @@ variable "AppServicePlanName" {
 
 variable "SQLServerName" {
   description = "The name of the Azure SQL Server"
-  default     = "chsqlserver"
+  default     = "chsqlserversonarquberg"
 }
 
 variable "AdminUserName" {
@@ -45,3 +34,12 @@ variable "AppServiceName" {
   description = "The name of the Azure App Service"
   default     = "chSonarQubeAppService"
 }
+
+variable "containerRegistrySASToken" {
+  description = "The SAS Token for the containerregistry storage account"
+}
+
+variable "BuildId" {
+  description = "The Build Id of the current Azure DevOps build"
+}
+
