@@ -56,7 +56,7 @@ stages:
         inputs:
           buildType: 'current'
           downloadType: 'single'
-          artifactName: 'ContainerRegistry'
+          artifactName: 'SonarQubeCore'
           downloadPath: '$(System.DefaultWorkingDirectory)'
         displayName: 'Download Sonarqube Artifact'
 
