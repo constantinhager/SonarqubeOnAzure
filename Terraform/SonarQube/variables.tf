@@ -34,3 +34,7 @@ variable "AppServiceName" {
   description = "The name of the Azure App Service"
   default     = "chSonarQubeAppService"
 }
+
+variable "containerRegistrySASToken" {
+  description = "The SAS Token for the containerregistry storage account"
+}
