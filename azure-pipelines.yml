@@ -52,6 +52,14 @@ stages:
           downloadPath: '$(System.DefaultWorkingDirectory)'
         displayName: 'Download Azure ResourceGroup Artifact'
 
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          downloadType: 'single'
+          artifactName: 'ContainerRegistry'
+          downloadPath: '$(System.DefaultWorkingDirectory)'
+        displayName: 'Download Sonarqube Artifact'
+
       - task: TerraformInstaller@0
         inputs:
           terraformVersion: '0.12.20'
