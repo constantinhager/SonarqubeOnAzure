@@ -113,6 +113,7 @@ stages:
           command: buildAndPush
           containerRegistry: AzureContainerRegistry
           Dockerfile: '$(System.DefaultWorkingDirectory)/SonarQubeCore/Dockerfile'
-          repository: '$(ContainerRegistryName).azurecr.io'
+          repository: 'chcontainerregistrymain.azurecr.io'
           tags: |
+            'sonarqube'
             '$(Build.BuildId)'
