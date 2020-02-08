@@ -86,3 +86,24 @@ stages:
             commandOptions: 'main.tfplan'
             environmentServiceNameAzureRM: 'MSDN'
         displayName: 'Terraform Apply'
+
+      - task: Docker@2
+        displayName: 'Login to Docker Hub'
+        inputs:
+          command: login
+          containerRegistry: DockerHub
+
+      - task: Docker@2
+        displayName: 'Login to ACR'
+        inputs:
+          command: login
+          containerRegistry: '$(ContainerRegistryName).azurecr.io'
+
+      - task: Docker@2
+        displayName: 'Push image to azure acr'
+        inputs:
+          containerRegistry: '$(ContainerRegistryName).azurecr.io'
+          command: buildAndPush
+          Dockerfile: '$(System.DefaultWorkingDirectory)/SonarQubeCore/Dockerfile'
+          tags: |
+            '$(ContainerRegistryName).azurecr.io/sonarqube:$(Build.BuildId)'
