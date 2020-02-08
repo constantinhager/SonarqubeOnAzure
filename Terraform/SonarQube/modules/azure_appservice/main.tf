@@ -17,4 +17,6 @@ resource "azurerm_template_deployment" "appservice" {
     "dockerServerURL"                = var.ACRLoginServer
     "ACRUserName"                    = var.ACRUserName
     "ACRPassword"                    = var.ACRPassword
+    "BuildId"                        = var.BuildId
+  }
 }

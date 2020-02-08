@@ -41,3 +41,7 @@ variable "ACRUserName" {
 variable "ACRPassword" {
   description = "The password"
 }
+
+variable "BuildId" {
+  description = "The Id of the current Azure DevOps Build"
+}
