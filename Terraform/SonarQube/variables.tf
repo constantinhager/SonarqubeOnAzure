@@ -14,7 +14,7 @@ variable "AppServicePlanName" {
 
 variable "SQLServerName" {
   description = "The name of the Azure SQL Server"
-  default     = "chsqlserver"
+  default     = "chsqlserversonarquberg"
 }
 
 variable "AdminUserName" {
