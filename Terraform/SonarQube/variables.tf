@@ -38,3 +38,8 @@ variable "AppServiceName" {
 variable "containerRegistrySASToken" {
   description = "The SAS Token for the containerregistry storage account"
 }
+
+variable "BuildId" {
+  description = "The Build Id of the current Azure DevOps build"
+}
+
