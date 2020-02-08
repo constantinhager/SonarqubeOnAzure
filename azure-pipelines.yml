@@ -11,6 +11,7 @@ trigger:
 variables:
   ResourceGroupName: 'SonarQube-rg'
   ContainerRegistryName: 'chcontainerregistrymain'
+  AdminUserName: 'chcontainerregistrymain'
 
 stages:
   - stage: BuildSonarQubeTerraformFiles
@@ -51,14 +52,6 @@ stages:
           artifactName: 'ContainerRegistry'
           downloadPath: '$(System.DefaultWorkingDirectory)'
         displayName: 'Download Azure ResourceGroup Artifact'
-
-      - task: DownloadBuildArtifacts@0
-        inputs:
-          buildType: 'current'
-          downloadType: 'single'
-          artifactName: 'SonarQubeCore'
-          downloadPath: '$(System.DefaultWorkingDirectory)'
-        displayName: 'Download Sonarqube Artifact'
 
       - task: TerraformInstaller@0
         inputs:
@@ -133,3 +126,52 @@ stages:
             containerRegistry: AzureContainerRegistry
             Dockerfile: '$(System.DefaultWorkingDirectory)/SonarQubeCore/Dockerfile'
             repository: 'sonarqube'
+
+  - stage: 'DeployAzureWebApp'
+    dependsOn: BuildSonarqubeDockerImage
+    condition: succeeded()
+
+    jobs:
+    - job: 'DeployAzureWebApp'
+
+      pool:
+        vmImage: 'ubuntu-latest'
+
+      steps:
+        - task: DownloadBuildArtifacts@0
+          inputs:
+            buildType: 'current'
+            downloadType: 'single'
+            artifactName: 'SonarQubeCore'
+            downloadPath: '$(System.DefaultWorkingDirectory)'
+          displayName: 'Download Sonarqube Artifact'
+
+        - task: TerraformTaskV1@0
+          inputs:
+            provider: 'azurerm'
+            command: 'init'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/SonarQubeCore'
+            backendServiceArm: 'MSDN'
+            backendAzureRmResourceGroupName: 'tfstate'
+            backendAzureRmStorageAccountName: 'ch45947'
+            backendAzureRmContainerName: 'terraform-state'
+            backendAzureRmKey: 'terraform.tfstate'
+          displayName: 'Terrafom Init'
+
+        - task: TerraformTaskV1@0
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/SonarQubeCore'
+            commandOptions: '-out main.tfplan -var=AdminUserName=$(AdminUserName) -var=AdminPassword=$(AdminPassword) -var=resourcegroupName=$(ResourceGroupName)'
+            environmentServiceNameAzureRM: 'MSDN'
+          displayName: 'Terraform Plan'
+
+        - task: TerraformTaskV1@0
+          inputs:
+            provider: 'azurerm'
+            command: 'apply'
+            workingDirectory: '$(System.DefaultWorkingDirectory)/SonarQubeCore'
+            commandOptions: 'main.tfplan'
+            environmentServiceNameAzureRM: 'MSDN'
+          displayName: 'Terraform Apply'
