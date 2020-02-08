@@ -19,7 +19,7 @@ module "AzureAppServicePlan" {
   source = "./modules/azure_appserviceplan"
 
   location           = var.location
-  resourcegroupName  = var.resourcegroupName
+  resourcegroupName  = module.AzureResourceGroup.resourcegroupName
   AppServicePlanName = var.AppServicePlanName
 }
 
@@ -27,7 +27,7 @@ module "AzureSQLServer" {
   source = "./modules/azure_sqlserver"
 
   location          = var.location
-  resourcegroupName = var.resourcegroupName
+  resourcegroupName = module.AzureResourceGroup.resourcegroupName
   SQLServerName     = var.SQLServerName
   AdminUserName     = var.AdminUserName
   AdminPassword     = var.AdminPassword
@@ -38,7 +38,7 @@ module "AzureAppService" {
   source = "./modules/azure_appservice"
 
   location          = var.location
-  resourcegroupName = var.resourcegroupName
+  resourcegroupName = module.AzureResourceGroup.resourcegroupName
   AppServiceName    = var.AppServiceName
   AppServicePlanId  = module.AzureAppServicePlan.serviceplanid
   SQLServerFQDN     = module.AzureSQLServer.sqlserverfqdn
